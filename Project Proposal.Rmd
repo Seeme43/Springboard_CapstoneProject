@@ -1,0 +1,84 @@
+---
+title: "Capstone Project Proposal"
+author: "Simone Zanetti"
+date: "26/4/2018"
+output: html_document
+---
+
+
+# ANALYSIS OF THE PERFORMANCE OF THE DELIVERY ACTIVITY OF A LOGISTIC COMPANY IN BRESCIA(ITA):   GLS-ITALY
+
+## DATASET OF ANALYSIS
+
+The dataset is a collection of over **150,000 data** granted by the **field office of Brescia** of GLS, a logistic company very active in the Italian territory, as well as in a big part of Europe. In particular, the data are the record of the **delivery operations of the entire month of March 2018** in the city of Brescia and its suburban area. The dataset has been provided directly by the company in a private way and, as a consequence, it is not a public dataset.
+Before to have a full understanding of the variables that compose the dataset, it is necessary to be provided with a basic overview of the activity of the client.
+
+## THE CLIENT AND ITS ACTIVITY
+
+**General Logistics Systems B.V.**, often shortened to GLS, is a Dutch, British-owned logistics company based in Amsterdam, Founded in 1999.
+GLS **operates within 42 European countries**, representing the third biggest parcel provider in Europe. GLS also provides services all over the world through its partnership network.
+In this context, the field office of Brescia, that committed this work of investigation, is a franchisee company of GLS and the specific subject of analysis.
+
+In particular, the **activity** of the field office of each city consists on **delivering goods**, coming from other cities, on its own territory. At the same time, they provide the **picking up of goods** that will be then loaded on trucks directed to other bases in other cities. In there, they will be delivered under the competence of the field office of the city of competence.
+In the specific, each morning goods coming from other cities are loaded on the different Gls van , where each one is identified with a specific code and operates on a specific area. Each driver delivers the packages to their owners, receiving a signature to prove it, and if requested provides to pick up packages that will be later in the evening loaded in trucks directed to other bases.
+As a consequence, the performance of delivery as well as the organisation of each area is a fundamental part of the activity in this specific field and an optimisation of it can improve the satisfaction of the clients and the efficiency of the company.
+
+
+## DESCRIPTION OF THE RAW DATASET
+
+Each variable of the dataset is below summarised and described, but before is important to observe that the name of each variable is the original one. As a consequence, this can cause confusion for an English reader. In this perspective, the first operation to be done will consist on renaming the variables substituting them with an english, and clearer name. For a deeper analysis of it see the next section.
+
+**VARIABLES** |**DESCRIPTION**
+------------- | --------------
+*DATA PART*   | The date when the package has been delivered from another city to arrive in Brescia for the deliver. Simply explained, the day when the truck has been loaded with the good of interest on the way to Brescia.
+*DATA ARR*    | The date, the morning, when the good arrived in Brescia on board of a truck in order to be loaded on the van for the delivery. Depending on different factors, it may not be immediately loaded on the van. In fact, it can happen that the package is left in the stock for few days.
+*DATA CONS*   | The day when the package has been loaded on the van and delivered ( it can happen it to be charged and not delivered but this is not recorded in this dataset).
+*MITT*        | The private client or the company that relies on GLS service in order to have his package delivered (in this case) in Brescia.
+*DITTA*       | The addressee of the delivery, that can be either a company or a private.
+*IND*         | The address of the addressee.
+*LOC*         | The district of the addressee.
+*PESO*        | The weight of the package.
+*COLLI*       | The number of packages per delivery.
+*CODICE*      | It represents the code associated to each driver to identify him.
+*FIRMA*       | The name of the person who picked up the package.
+*ORA*         | The hour in which the delivery has been done.
+
+
+## THE GOAL OF THE ANALYSIS
+
+The activity of the company and the dataset that has been made available for the
+analysis suggests a **necessity to assess the performance** of the process of delivery on the
+territory. In other words, the possibility to analyse if the activity is fully optimised may
+give to the client a new point of view to **eventually reorganise the approach and the work on the area where can proved a lack of performance**. In this perspective, with the data
+available it will be possibile to analyse the activity of each driver, identified with a specific
+code with the variable CODICE, which areas of the city can have the majority or minority
+of the deliveries, as well as which specific days or moment of the day can affect the
+performance, etc. At the end of the investigation, the client should be able to eventually
+provide the right modifications on the organisation of the deliveries in order to optimise
+the performance.
+
+## THE APPROACH OF THE ANALYSIS
+
+As regards the approach to follow on this investigation, there is a **preliminary necessity to modify the name of each variable** in order to make it more comprehensible for the
+analysis. In particular, each variable will be translated in English and modified with the
+purpose of making it clearer. Dplyr and Tidyr represent the best instruments to help
+during this phase.
+In addition, the **addresses, a vital variable for the analysis, will be converted into geographic coordinates** in order to give the possibility to track the route of each driver
+during his activity of delivery.
+After that, every **missing value or unordinary value will have to be analysed and eventually modified or discarded**. In this way, each value will be useful for an accurate
+analysis.
+Moreover, the possibility to filter and order each variable based on specific criteria will
+allow to **identify specific trends on the data analysed**. This operation will be made
+possibile through the utilisation of ggplot2 packet in R. From this point of view, the goal
+is to analyse the activity on each area, such as the one of each driver and the activity of
+each day or hour in order to identify specific tendencies, that will be consequently fully
+analysed with the statistical knowledges available.
+From this point of view, **an analysis with the basic indexes of descriptive statistic** will be
+conducted in order to identify key points and **to establish a strategy for future analysis and studies** related to this investigation.
+
+## DELIVERABLES OF THIS PROJECT 
+
+After have completed the analysis, Github will be used as base to publish the results. In particular, an **R Markdown document** will be the perfect means to publish a **complete report that can be clear from a descriptive point of view, without lack the possibility to provide codes and technical details about the processes involved in the analysis**. In this way, it will be possible to also rely on the passionate community of github for any feedback. Secondly, a **detailed slide deck** with the aim of showing the analysis and the **result to the client** will be composed. From this point of view, it will be fundamental to provide a clear and involving explanation, particularly focused on the results of the analysis in order to be helpful to promote eventual strategies the future. 
+
+
+
