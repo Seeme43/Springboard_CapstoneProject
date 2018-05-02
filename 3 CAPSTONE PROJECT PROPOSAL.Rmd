@@ -9,7 +9,7 @@ output: html_notebook
 
 ## SAN FRANCISCO UBER TRAFFIC DATA
 
-The following link regards a very interesting argument which deals with the possibility to improve urban traffic on the world’s busiest streets, thanks to the data gathered from Uber and now made available directly from the society with the introduction of "*Uber Movement*".
+The following link regards a very interesting topic which deals with the possibility to improve urban traffic on the world’s busiest streets, thanks to the data gathered from Uber and now made available directly from the company with the introduction of "*Uber Movement*".
 I am interested on this topic because I believe it can be either useful for me in order to deal with real and complex data and learn how to manage them, and useful for my career having the possibility to approach and prepare myself for concrete problems whose contribute can improve everyone's life.  
 
 Here is the article that inspired my curiosity:
@@ -22,16 +22,16 @@ The following link regards the data made available, in the specific, regarding t
 
 ## ANALYSIS OF THE PERFORMANCE OF THE DELIVERY ACTIVITY OF A LOGISTIC COMPANY IN BRESCIA(ITA): GLS-ITALY 
 
-The dataset of interest regarding this analysis would be eventually provide to me in a private way, thanks to the direct relationship I can have with the company.
-However, because of Privacy Rules, I do not have the possibility to share the dataset.
+The dataset of interest regarding this analysis would be eventually provided to me in a private way, thanks to the direct relationship I can have with the company.
+However, because of Privacy Rules, I do not have the possibility to share the dataset in its entireness.
 In particular, the dataset contains over 150,000 data provided by the field office of Brescia of GLS, a logistic company very active in the Italian territory, as well as in a big part of Europe. The subject of the analysis would eventually be the record of the delivery operations of one or more months of in the city of Brescia and its suburban area.
-I am interested about this particular analysis because, first of all, I will have the possibility to work on a totally raw dataset and make deep experience on the process of cleansing and managing of data. In this perspective, I will have the possibility to work on a original dataset whose results, good or bad, will be original as well. In addition, I believe that this dataset is the one that can help me most to provide a concrete result after my research and I would be proud to create value for a company.
+I am interested about this particular subject of analysis because, first of all, I will have the possibility to work on a totally raw dataset and gain deep experience on the process of cleansing and managing of data. In this perspective, I will have the possibility to work on a original dataset whose results, good or bad, will be original as well. In addition, I believe that this dataset is the one that can help me most to provide a concrete result after my research and I would be proud to share and create value for a company.
 
 
 ## CRIME DATA OF THE CITY OF LOS ANGELES(USA)
 
 This dataset reflects incidents of crime in the City of Los Angeles dating back to 2010.  
-The dataset inspired me the idea to provide an analysis to identify trends regarding dangerous area, a detailed analysis of criminal (Age, genre, sex etc ) in the different area and understanding which crimes are more subject to be committed . Eventually trying to furnish an analysis of prediction of crime that could help to optimise the system of defence in the area of Los Angeles.
+The dataset inspired me the idea to provide an analysis to identify trends regarding dangerous area, a detailed analysis of criminals (Age, genre, sex etc ) in the different aarea and environments and understanding which crimes are more subject to be committed. I would ambitiously like to start to approach a model that tries to furnish an analysis of prediction of crime that could help to optimise the system of defence in the area of Los Angeles.
 
  https://data.lacity.org/A-Safe-City/Crime-Data-from-2010-to-Present/y8tr-7khq
 
