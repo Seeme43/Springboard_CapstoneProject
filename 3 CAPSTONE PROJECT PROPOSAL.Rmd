@@ -24,7 +24,7 @@ The following link regards the data made available, in the specific, regarding t
 
 The dataset of interest regarding this analysis would be eventually provided to me in a private way, thanks to the direct relationship I can have with the company.
 However, because of Privacy Rules, I do not have the possibility to share the dataset in its entireness.
-In particular, the dataset contains over 150,000 data provided by the field office of Brescia of GLS, a logistic company very active in the Italian territory, as well as in a big part of Europe. The subject of the analysis would eventually be the record of the delivery operations of one or more months of the city of Brescia and its suburban area.
+In particular, the dataset contains over 150,000 data provided by the field office of Brescia of GLS, a logistic company very active in the Italian territory, as well as in a big part of Europe. The subject of the analysis would eventually be the record of the delivery operations of one or more months in the city of Brescia and its suburban area.
 I am interested about this particular subject of analysis because, first of all, I will have the possibility to work on a totally raw dataset and gain deep experience on the process of cleansing and managing of data. In this perspective, I will have the possibility to work on a original dataset whose results, good or bad, will be original as well. In addition, I believe that this dataset is the one that can help me most to provide a concrete result after my research and I would be proud to share and create value for a company.
 
 
