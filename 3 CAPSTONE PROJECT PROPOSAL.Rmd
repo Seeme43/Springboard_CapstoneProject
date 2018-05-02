@@ -13,6 +13,7 @@ The following link regards a very interesting topic which deals with the possibi
 I am interested on this topic because I believe it can be either useful for me in order to deal with real and complex data and learn how to manage them, and useful for my career having the possibility to approach and prepare myself for concrete problems whose contribute can improve everyone's life.  
 
 Here is the article that inspired my curiosity:
+
 https://futurism.com/uber-releases-a-staggering-2-billion-trips-worth-of-traffic-data/
 
 The following link regards the data made available, in the specific, regarding the city of San Francisco(USA):
