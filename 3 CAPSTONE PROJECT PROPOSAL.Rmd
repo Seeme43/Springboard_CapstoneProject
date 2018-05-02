@@ -13,10 +13,10 @@ The following link regards a very interesting argument which deals with the poss
 I am interested on this topic because I believe it can be either useful for me in order to deal with real and complex data and learn how to manage them, and useful for my career having the possibility to approach and prepare myself for concrete problems whose contribute can improve everyone's life.  
 
 Here is the article that inspired my curiosity:
-[id]: https://futurism.com/uber-releases-a-staggering-2-billion-trips-worth-of-traffic-data/
+ https://futurism.com/uber-releases-a-staggering-2-billion-trips-worth-of-traffic-data/
 
 The following link regards the data made available, in the specific, regarding the city of San Francisco(USA):
-[id]: https://movement.uber.com/explore/san_francisco/travel-times/query?lang=en-US 
+ https://movement.uber.com/explore/san_francisco/travel-times/query?lang=en-US 
 
 
 ## ANALYSIS OF THE PERFORMANCE OF THE DELIVERY ACTIVITY OF A LOGISTIC COMPANY IN BRESCIA(ITA): GLS-ITALY 
@@ -32,6 +32,6 @@ I am interested about this particular analysis because, first of all, I will hav
 This dataset reflects incidents of crime in the City of Los Angeles dating back to 2010.  
 The dataset inspired me the idea to provide an analysis to identify trends regarding dangerous area, a detailed analysis of criminal (Age, genre, sex etc ) in the different area and understanding which crimes are more subject to be committed . Eventually trying to furnish an analysis of prediction of crime that could help to optimise the system of defence in the area of Los Angeles.
 
-[id]: https://data.lacity.org/A-Safe-City/Crime-Data-from-2010-to-Present/y8tr-7khq
+ https://data.lacity.org/A-Safe-City/Crime-Data-from-2010-to-Present/y8tr-7khq
 
 (NOTE: This data is transcribed from original crime reports that are typed on paper and therefore there may be some inaccuracies within the data. Some location fields with missing data are noted as (0°, 0°). Address fields are only provided to the nearest hundred block in order to maintain privacy. This data is as accurate as the data in the database.)
