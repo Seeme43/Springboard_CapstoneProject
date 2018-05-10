@@ -1,0 +1,78 @@
+---
+title: "Capstone Data Wrangling"
+author: "Simone Zanetti"
+date: "10/5/2018"
+output: html_document
+---
+
+```{r}
+library(tidyr)
+library(dplyr)
+```
+
+# ERASE THE FIRST ROW THAT IS NOT RELEVANT TO MY DATASET
+```{r}
+data_clean <- data_clean[-1,]
+```
+
+# 1. CHANGE NAME OF EACH VARIABLE TO MAKE THEM UNDERSTABLE
+```{r}
+data_clean <- data_clean %>% rename( "dep_to_bs" = `DATA PART`,
+                                     "arr_to_bs" = `DATA ARR`,
+                                     "delivery_day" = `DATA CONS`,
+                                     "sender_who" = MITT,
+                                     "addresser_who" = DITTA,
+                                     "address_delivery"= IND,
+                                     "district_delivery" = LOC,
+                                     "weight_pack" = PESO,        
+                                     "num_pack"= COLLI,
+                                     "driver_code" = CODICE,
+                                     "pickup_who"= FIRMA,
+                                     "pickup_time" = ORA)
+```
+
+## Uniform each name to Lower character
+
+```{r}
+data_clean <- data_clean %>% 
+              mutate_all(funs(tolower(.)))
+```
+
+# 2. DEALING WITH MISSING VALUES
+
+## OVERVIEW OF WHICH VARIABLES CONTAINS MISSING VALUES, AND HOW MANY, CREATING A TEMPORARY VARIABLE USEFUL FOR ANALYSIS
+```{r}
+missing_values <- data_clean %>% summarise_all(funs(sum(is.na(.)))) %>% gather(variable, num_NA) 
+```
+
+Once I identified which variables contain missing values I decide how to manage them:
+
+**1. addressee_who**
+```{r}
+data_clean %>% filter(is.na(addresser_who))      #in order to check which rows contain NA in the variable and decide how to manage it
+data_clean <- data_clean %>%  mutate(addresser_who = replace(addresser_who,is.na(addresser_who), "UNKNOWN"))
+```
+
+**2. address_delivery**
+```{r}
+data_clean %>% filter(is.na(address_delivery))   #in order to check which rows contain NA in the variable and decide how to manage it
+data_clean <- data_clean %>%  
+              mutate(address_delivery = replace(address_delivery,addresser_who == "giancarlo pagnoni", "villaggio badia,trav. seconda")) # I could see that "giancarlo pagnoni" 
+                                                                                                                                         # has lot of deliveries: in this way I have modified the                                                                                                                                          # NA using the address of the deliveries with no NA.
+
+# with data_clean <- data_clean %>% filter(!is.na(address_delivery))  I can delete the remaining NA rows
+```
+*QUESTION N.1: DO I HAVE A POSSIBILITY TO CHECK WHICH ADDRESSER APPEARS MORE TIME AND EVENTUALLY MODIFY IT WITH A CODE ?*
+  EX. using a FOR LOOP AND IF STATEMENT ?
+
+**3. driver_code**
+```{r}
+data_clean %>% filter(is.na(driver_code))    #in order to check which rows contain NA in the variable and decide how to manage it
+```
+I do not need the rows with "fermo deposito" as address delivery, as it means these deliveries have been picked up directly on the factory
+```{r}
+data_clean <- data_clean %>% filter(data_clean$address_delivery != "fermo deposito")
+```
+
+**4. pickup_hour**
+
