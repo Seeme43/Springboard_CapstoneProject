@@ -63,7 +63,7 @@ data_clean <- data_clean %>%  mutate(addresser_who = replace(addresser_who,is.na
 data_clean %>% filter(is.na(address_delivery))   #in order to check which rows contain NA in the variable and decide how to manage it
 data_clean <- data_clean %>%  
               mutate(address_delivery = replace(address_delivery,addresser_who == "giancarlo pagnoni", "villaggio badia,trav. seconda")) # I could see that "giancarlo pagnoni" 
-                                                                                                                                         # has lot of deliveries: in this way I have modified the                                                                                                                                          # NA using the address of the deliveries with no NA.
+                                                                                                                                         # has lot of deliveries: in this way I have modified the NA using the address of the deliveries with no NA.
 
 # with data_clean <- data_clean %>% filter(!is.na(address_delivery))  I can delete the remaining NA rows
 ```
@@ -102,7 +102,8 @@ I create a variable to analyse
 district_distinct <- group_by(data_clean, district_delivery) %>% summarise()  
 ```
 
-### QUESTION N.2: IS THERE A WAY TO ANALYSE IF THERE IS AN EFFECTIVE CORRISPONDENCE BETWEEN THESE NAMES AND DISTRICTS IN BRESCIA*? (##### Example, if I obtain a dataset with all the district of Brescia and I try to compare them ?). Because I have 468 district and I cannot know every district of this city. In doing so a could have this done by R and manage just the district that do not find correspondence.
+### QUESTION N.2: IS THERE A WAY TO ANALYSE IF THERE IS AN EFFECTIVE CORRISPONDENCE BETWEEN THESE NAMES AND DISTRICTS IN BRESCIA*? 
+##### Example, if I obtain a dataset with all the district of Brescia and I try to compare them ?). Because I have 468 district and I cannot know every district of this city. In doing so a could have this done by R and manage just the district that do not find correspondence.
 
 **Otherwise, I can work one per time but it would be an enormous waste of time**
 ```{r}
