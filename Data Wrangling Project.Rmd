@@ -139,5 +139,15 @@ In this case it is necessary to reduce the variable address_distinct to its mini
 ```
 
 2) I *associate each district with its CAP* (the italian zip code) in order to perform my analysis within each CAP.
+```{r}
+```
 
+
+# 5. WORKING WITH DATES 
+
+
+# 6. WORKING WITH HOURS
+
+
+# SUMMARY: CREATE NEW DATAFRAMES USEFUL FOR MY ANALYSIS
 
