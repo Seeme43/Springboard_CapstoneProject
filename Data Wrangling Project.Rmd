@@ -15,6 +15,8 @@ library(dplyr)
 data_clean <- data_clean[-1,]
 ```
 
+----------------------------------------
+
 # 1. CHANGE NAME OF EACH VARIABLE TO MAKE THEM UNDERSTABLE
 ```{r}
 data_clean <- data_clean %>% rename( "dep_to_bs" = `DATA PART`,
@@ -38,9 +40,12 @@ data_clean <- data_clean %>%
               mutate_all(funs(tolower(.)))
 ```
 
+
+----------------------------------------
+
 # 2. DEALING WITH MISSING VALUES
 
-## OVERVIEW OF WHICH VARIABLES CONTAINS MISSING VALUES, AND HOW MANY, CREATING A TEMPORARY VARIABLE USEFUL FOR ANALYSIS
+I provide an *overwiew of which variables contain missing values* and *how many* creating a temporary variable useful for the analysis.
 ```{r}
 missing_values <- data_clean %>% summarise_all(funs(sum(is.na(.)))) %>% gather(variable, num_NA) 
 ```
@@ -74,6 +79,66 @@ I do not need the rows with "fermo deposito" as address delivery, as it means th
 data_clean <- data_clean %>% filter(data_clean$address_delivery != "fermo deposito")
 ```
 
-**4. pickup_hour**
+**4. pickup_time**
+
+I cannot recover the missing hours, but I can lead an analysis of the missing hours to eventually find out trends.
+So, I create a dataframe with the missing hours
+```{r}
+NA_pickuptime_foranalysis <- data_clean %>%  mutate(pickup_time = replace(pickup_time,is.na(pickup_time), 0 )) %>% 
+                 filter(pickup_time == 0)
+```
+
+After, I delete the rows containing the Missing hours.
+```{r}
+data_clean<- data_clean %>% filter(data_clean$pickup_time > 0)
+```
+
+----------------------------------------
+
+# 3. FIXING DIFFERENCES OF SPELLING (on variables in which this is necessary)
+
+*A. DISTRICT_DELIVERY*
+I create a variable to analyse 
+```{r}
+district_distinct <- group_by(data_clean, district_delivery) %>% summarise()  
+```
+
+*QUESTION N.2: IS THERE A WAY TO ANALYSE IF THERE IS AN EFFECTIVE CORRISPONDENCE BETWEEN THESE NAMES AND DISTRICTS IN BRESCIA*? (Example, if I obtain a dataset with all the district of Brescia and I try to compare them ?). Because I have 468 district and I cannot know every district of this city. In doing so a could have this done by R and manage just the district that do not find correspondence.
+
+** Otherwise, I can work one per time but it would be an enormous waste of time **
+```{r}
+data_clean <- data_clean %>% 
+  mutate(district_delivery = sub(pattern = "roe.*" , "roe' volciano", district_delivery))
+```
+
+*B. ADDRESS_DELIVERY*
+I create a variable to analyse 
+```{r}
+address_distinct <- group_by(data_clean, address_delivery) %>% summarise()  
+```
+In this case I have over 80k rows.
+*First thing* I should do is to erase the number on the street that make the research to unusefully precise.
+```{r}
+data_clean <- data_clean %>%
+              mutate(address_delivery= gsub("[[:digit:]]","",address_delivery))  
+              # QUESTION N.3: MAYBE AVOID ALL THE PUNCTUATION WITH [:punct:] would work ?
+```
+
+*QUESTION N.4: HOW I ACT WITH ADDRESS_DELIVERY ? LOOKS A TRUE MESS.*
+
+----------------------------------------
+
+# 4. TURN ADDRESS INTO COHORDINATES 
+
+In this particular case I have Two possibilities of approach:
+
+1) I turn the address into coordinates with the google, creating a variable address_lat and variable address_long.
+
+In this case it is necessary to reduce the variable address_distinct to its minimum, ensuring to have optimally fixed the differences of spelling,  since the google geocoding system allows to make 2.5k queries per day.
+```{r}
+# LEARN HOW TO DO THIS.
+```
+
+2) I associate each district with its CAP (the italian zip code) in order to perform my analysis within each CAP.
 
 
