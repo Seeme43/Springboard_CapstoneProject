@@ -123,7 +123,7 @@ data_clean <- data_clean %>%
               # QUESTION N.3: MAYBE AVOID ALL THE PUNCTUATION WITH [:punct:] would work ?
 ```
 
-*QUESTION N.4: HOW I ACT WITH ADDRESS_DELIVERY ? LOOKS A TRUE MESS.*
+### QUESTION N.4: IS IT THE BETTER WAY TO HANDLE ADDRESS_DELIVERY ? LOOKS A TRUE MESS.*
 
 ----------------------------------------
 
