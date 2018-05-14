@@ -67,8 +67,7 @@ data_clean <- data_clean %>%
 
 # with data_clean <- data_clean %>% filter(!is.na(address_delivery))  I can delete the remaining NA rows
 ```
-*QUESTION N.1: DO I HAVE A POSSIBILITY TO CHECK WHICH ADDRESSER APPEARS MORE TIME AND EVENTUALLY MODIFY IT WITH A CODE ?*
-  EX. using a FOR LOOP AND IF STATEMENT ?
+### QUESTION N.1: DO I HAVE A POSSIBILITY TO CHECK WHICH ADDRESSER APPEARS MORE TIME AND EVENTUALLY MODIFY IT WITH A CODE ? EX. using a FOR LOOP AND IF STATEMENT ?
 
 **3. driver_code**
 ```{r}
