@@ -102,9 +102,8 @@ I create a variable to analyse
 district_distinct <- group_by(data_clean, district_delivery) %>% summarise()  
 ```
 
-### QUESTION N.2: IS THERE A WAY TO ANALYSE IF THERE IS AN EFFECTIVE CORRISPONDENCE BETWEEN THESE NAMES AND DISTRICTS IN BRESCIA*? 
-##### Example, if I obtain a dataset with all the district of Brescia and I try to compare them ?). Because I have 468 district and I cannot know every district of this city. In doing so a could have this done by R and manage just the district that do not find correspondence.
-
+### QUESTION N.2: IS THERE A WAY TO ANALYSE IF THERE IS AN EFFECTIVE CORRISPONDENCE BETWEEN THESE NAMES AND DISTRICTS IN BRESCIA? 
+#### Example, if I obtain a dataset with all the district of Brescia and I try to compare them ?). Because I have 468 district and I cannot know every district of this city. In doing so I could have this done by R and manage just the district that do not find correspondence.
 **Otherwise, I can work one per time but it would be an enormous waste of time**
 ```{r}
 data_clean <- data_clean %>% 
