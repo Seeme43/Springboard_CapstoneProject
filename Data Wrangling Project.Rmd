@@ -10,6 +10,7 @@ library(tidyr)
 library(dplyr)
 ```
 
+                 
 # ERASE THE FIRST ROW THAT IS NOT RELEVANT TO MY DATASET
 ```{r}
 data_clean <- data_clean[-1,]
@@ -145,8 +146,45 @@ In this case it is necessary to reduce the variable address_distinct to its mini
 
 # 5. WORKING WITH DATES 
 
+_ Convert character string to Dates regarding the variables "dep_to_bs", "arr_to_bs", "delivery_day"
+```{r}
+data_clean <- data_clean %>% mutate(dep_to_bs = as.Date( x = dep_to_bs, format = "%d / %m / %y"),
+                                    arr_to_bs = as.Date(x = arr_to_bs, format = "%d / %m / %y"),
+                                    delivery_day = as.Date(x = delivery_day, format = "%d / %m / %y"))
+```
+
+_ Trasform dates in a better format
+```{r}
+data_clean <- data_clean %>% mutate(dep_to_bs = format( x = dep_to_bs, format = "%d/%m/%y"),
+                                    arr_to_bs = format(x = arr_to_bs, format = "%d/%m/%y"),
+                                    delivery_day = format(x = delivery_day, format = "%d/%m/%y" ))
+```
+_ Split delivery_day column into 3 variables
+```{r}
+data_clean <- data_clean %>% separate(delivery_day, c("day_deliv", "month_deliv", "year_deliv"), sep = "/")
+```
+_ Obtain the variable "weekday_deliv"
+```{r}
+data_clean <- data_clean %>% mutate(weekday_deliv = format(delivery_day, "%a %d"))
+```
+
+_ In case I will just work with March data, I will not need variable "month_deliv" and "year_deliv"
+```{r}
+data_clean <- select(data_clean, - month_deliv, - year_deliv)
+```
+
+
 
 # 6. WORKING WITH HOURS
+_ Convert character string to Hour regarding the variable "pickup_time"
+```{r}
+# HOW TO DO IT? as.POSITXct looks not totally helpful
+```
+
+_ Create a variable to perform operation with hours, converting each hour in minutes past midnight
+```{r}
+# HOW TO DO IT ?
+```
 
 
 # SUMMARY: CREATE NEW DATAFRAMES USEFUL FOR MY ANALYSIS
