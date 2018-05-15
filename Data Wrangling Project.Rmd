@@ -128,20 +128,29 @@ data_clean <- data_clean %>%
 
 ----------------------------------------
 
-# 4. TURN ADDRESS INTO COHORDINATES 
+# 4. TURN ADDRESS INTO COORDINATES 
 
 In this particular case I have Two possibilities of approach:
 
-1) I *turn the address into coordinates* with the google, creating a variable address_lat and variable address_long.
+1) I *associate each district with its CAP* (the italian zip code) in order to perform my analysis within each CAP.  
+
+In order to do so, I add to each row of "district_distinct" the name "Brescia" that will be useful for the Google geocoding system to recover the necessary data regarding each district.
+```{r}
+district_distinct <- district_distinct %>%  mutate(city = "Brescia") %>% unite(district_distinct, district_delivery, city, sep = "-" ) # IS THERE A SHORTER WAY ?
+```
+
+Work with Google geocoding and ggmap packet to obtain the CAP
+```{r}
+# LEARN HOW TO DO THIS !
+```
+
+2) I *turn the addresses into coordinates* with the google geocoding as well, creating a variable address_lat and variable address_long.
 
 In this case it is necessary to reduce the variable address_distinct to its minimum, ensuring to have optimally fixed the differences of spelling,  since the google geocoding system allows to make 2.5k queries per day.
 ```{r}
 # LEARN HOW TO DO THIS.
 ```
 
-2) I *associate each district with its CAP* (the italian zip code) in order to perform my analysis within each CAP.
-```{r}
-```
 
 
 # 5. WORKING WITH DATES 
@@ -153,7 +162,7 @@ data_clean <- data_clean %>% mutate(dep_to_bs = as.Date( x = dep_to_bs, format =
                                     delivery_day = as.Date(x = delivery_day, format = "%d / %m / %y"))
 ```
 
-_ Trasform dates in a better format
+_ Trasform dates in a better format 
 ```{r}
 data_clean <- data_clean %>% mutate(dep_to_bs = format( x = dep_to_bs, format = "%d/%m/%y"),
                                     arr_to_bs = format(x = arr_to_bs, format = "%d/%m/%y"),
@@ -165,7 +174,7 @@ data_clean <- data_clean %>% separate(delivery_day, c("day_deliv", "month_deliv"
 ```
 _ Obtain the variable "weekday_deliv"
 ```{r}
-data_clean <- data_clean %>% mutate(weekday_deliv = format(delivery_day, "%a %d"))
+data_clean <- data_clean %>% mutate(weekday_deliv = format(delivery_day, "%a %d"))  # FIX ISSUE: DAYS EXPRESSED IN ITALIAN
 ```
 
 _ In case I will just work with March data, I will not need variable "month_deliv" and "year_deliv"
@@ -188,4 +197,6 @@ _ Create a variable to perform operation with hours, converting each hour in min
 
 
 # SUMMARY: CREATE NEW DATAFRAMES USEFUL FOR MY ANALYSIS
+
+
 
