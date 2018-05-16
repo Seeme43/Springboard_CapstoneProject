@@ -155,27 +155,42 @@ In this case it is necessary to reduce the variable address_distinct to its mini
 
 # 5. WORKING WITH DATES 
 
+_ Duplicate the variable "delivery_day" in order to keep it after I will have it split as following:
+
+```{r}
+data_clean <- data_clean %>% mutate(delivery_date = delivery_day)
+```
+
 _ Convert character string to Dates regarding the variables "dep_to_bs", "arr_to_bs", "delivery_day"
 ```{r}
 data_clean <- data_clean %>% mutate(dep_to_bs = as.Date( x = dep_to_bs, format = "%d / %m / %y"),
                                     arr_to_bs = as.Date(x = arr_to_bs, format = "%d / %m / %y"),
-                                    delivery_day = as.Date(x = delivery_day, format = "%d / %m / %y"))
+                                    delivery_date = as.Date(x = delivery_date, format = "%d / %m / %y"))
 ```
 
-_ Trasform dates in a better format 
+
+_ Obtain the variable "weekday_deliv"
 ```{r}
-data_clean <- data_clean %>% mutate(dep_to_bs = format( x = dep_to_bs, format = "%d/%m/%y"),
-                                    arr_to_bs = format(x = arr_to_bs, format = "%d/%m/%y"),
-                                    delivery_day = format(x = delivery_day, format = "%d/%m/%y" ))
+data_clean <- data_clean %>% mutate(weekday_deliv = format(delivery_date, "%a"))  # FIX ISSUE: DAYS EXPRESSED IN ITALIAN
 ```
+
+
+
 _ Split delivery_day column into 3 variables
 ```{r}
 data_clean <- data_clean %>% separate(delivery_day, c("day_deliv", "month_deliv", "year_deliv"), sep = "/")
 ```
-_ Obtain the variable "weekday_deliv"
+
+
+
+_ Trasform dates in a better format  (ISSUE: IT TURNS THEM INTO CHARACTER AGAIN)
 ```{r}
-data_clean <- data_clean %>% mutate(weekday_deliv = format(delivery_day, "%a %d"))  # FIX ISSUE: DAYS EXPRESSED IN ITALIAN
+data_clean <- data_clean %>% mutate(dep_to_bs = format( x = dep_to_bs, format = "%d/%m/%y"),
+                                    arr_to_bs = format(x = arr_to_bs, format = "%d/%m/%y"))
 ```
+
+
+
 
 _ In case I will just work with March data, I will not need variable "month_deliv" and "year_deliv"
 ```{r}
@@ -185,18 +200,36 @@ data_clean <- select(data_clean, - month_deliv, - year_deliv)
 
 
 # 6. WORKING WITH HOURS
-_ Convert character string to Hour regarding the variable "pickup_time"
+_ Convert character string to time regarding the variable "pickup_time"
+(The following section code needs to be improved)
 ```{r}
-# HOW TO DO IT? as.POSITXct looks not totally helpful
+data_clean <- data_clean %>% mutate(pickup_time =  as.POSIXct(x = data_clean$pickup_time, format = "%H:%M")) %>% 
+              mutate(pickup_time = gsub(pattern = "2018-05-16", replacement = "",x = pickup_time))                 #PROBABILY NOT THE BEST WAY AND THE                                                                                                                          PATTERN IS GOOD FOR TODAY, NOT AFTER.
+data_clean <- data_clean %>% mutate(pickup_time = times(x = pickup_time))
+
 ```
 
-_ Create a variable to perform operation with hours, converting each hour in minutes past midnight
+_ Create a variable to perform operation with hours, converting each hour in minutes (past midnight?)
 ```{r}
 # HOW TO DO IT ?
 ```
 
 
+# 7.CONVERT NECESSARY VARIABLES INTO NUMERICS
+
+```{r}
+
+data_clean$weight_pack <- 
+data_clean$num_pack <- as.numeric(data_clean$num_pack)
+```
+
+
 # SUMMARY: CREATE NEW DATAFRAMES USEFUL FOR MY ANALYSIS
+
+```{r}
+# TO BE COMPLETED DURING THE ANALYSIS
+```
+
 
 
 
