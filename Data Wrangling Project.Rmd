@@ -148,7 +148,10 @@ district_distinct <- as.character(district_distinct)
 
 district_googleinfo <- geocode(location = district_distinct, output = c("more"))  # IT WORKS IF I TAKE THEM SINGULARLY, NOT TOGETHER (it gives me error WTF)
 
-revgeo <- revgeocode(location = as.numeric(brescialatlong), output = c("more")) # TECHNICALLY I WILL NOT NEED THIS AS I HAVE ALREADY SET THE FUNCTION GEOCODE IN OUTPUT =  "MORE"
+# AFTER THAT I WILL SELECT THE COLUMN "POSTAL_CODE" AND ASSOCIATE IT TO EACH DISTRICT IN MY DATA FRAME
+
+
+revgeo <- revgeocode(location = as.numeric(district_googleinfo), output = c("more")) # TECHNICALLY I WILL NOT NEED THIS AS I HAVE ALREADY SET THE FUNCTION GEOCODE IN OUTPUT =  "MORE"
 
 ```
 
