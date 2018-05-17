@@ -151,7 +151,7 @@ district_googleinfo <- geocode(location = district_distinct, output = c("more"))
 # AFTER THAT I WILL SELECT THE COLUMN "POSTAL_CODE" AND ASSOCIATE IT TO EACH DISTRICT IN MY DATA FRAME
 
 
-revgeo <- revgeocode(location = as.numeric(district_googleinfo), output = c("more")) # TECHNICALLY I WILL NOT NEED THIS AS I HAVE ALREADY SET THE FUNCTION GEOCODE IN OUTPUT =  "MORE"
+revgeo <- revgeocode(location = as.numeric(..), output = c("more")) # TECHNICALLY I WILL NOT NEED THIS AS I HAVE ALREADY SET THE FUNCTION GEOCODE IN OUTPUT =  "MORE"
 
 ```
 
