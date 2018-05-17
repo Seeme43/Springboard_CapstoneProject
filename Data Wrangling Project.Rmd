@@ -155,16 +155,12 @@ revgeo <- revgeocode(location = as.numeric(..), output = c("more")) # TECHNICALL
 
 ```
 
-Work with Google geocoding and ggmap packet to obtain the CAP
-```{r}
-# SAME THAN BEFORE
-```
 
 2) I **turn the addresses into coordinates** with the google geocoding as well, creating a variable address_lat and variable address_long.
 
 In this case it is necessary to reduce the variable address_distinct to its minimum, ensuring to have optimally fixed the differences of spelling,  since the google geocoding system allows to make 2.5k queries per day.
 ```{r}
-# LEARN HOW TO DO THIS.
+# SAME THAN BEFORE
 ```
 
 
