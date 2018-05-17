@@ -8,9 +8,15 @@ output: html_document
 ```{r}
 library(tidyr)
 library(dplyr)
+library(chron)
+library(ggplot2)
+library(ggmap)
 ```
 
-                 
+```{r}
+data_clean <- 
+```
+              
 # ERASE THE FIRST ROW THAT IS NOT RELEVANT TO MY DATASET
 ```{r}
 data_clean <- data_clean[-1,]
@@ -117,7 +123,7 @@ I create a variable to analyse
 address_distinct <- group_by(data_clean, address_delivery) %>% summarise()  
 ```
 In this case I have over 80k rows.
-*First thing* I should do is to erase the number on the street that make the research to unusefully precise.
+*First thing* I should do is to erase the number on the street that make the research too unusefully precise.
 ```{r}
 data_clean <- data_clean %>%
               mutate(address_delivery= gsub("[[:digit:]]","",address_delivery))  
@@ -137,14 +143,21 @@ In this particular case I have Two possibilities of approach:
 In order to do so, I add to each row of "district_distinct" the name "Brescia" that will be useful for the Google geocoding system to recover the necessary data regarding each district.
 ```{r}
 district_distinct <- district_distinct %>%  mutate(city = "Brescia") %>% unite(district_distinct, district_delivery, city, sep = "-" ) # IS THERE A SHORTER WAY ?
+
+district_distinct <- as.character(district_distinct)
+
+district_googleinfo <- geocode(location = district_distinct, output = c("more"))  # IT WORKS IF I TAKE THEM SINGULARLY, NOT TOGETHER (it gives me error WTF)
+
+revgeo <- revgeocode(location = as.numeric(brescialatlong), output = c("more")) # TECHNICALLY I WILL NOT NEED THIS AS I HAVE ALREADY SET THE FUNCTION GEOCODE IN OUTPUT =  "MORE"
+
 ```
 
 Work with Google geocoding and ggmap packet to obtain the CAP
 ```{r}
-# LEARN HOW TO DO THIS !
+# SAME THAN BEFORE
 ```
 
-2) I *turn the addresses into coordinates* with the google geocoding as well, creating a variable address_lat and variable address_long.
+2) I **turn the addresses into coordinates** with the google geocoding as well, creating a variable address_lat and variable address_long.
 
 In this case it is necessary to reduce the variable address_distinct to its minimum, ensuring to have optimally fixed the differences of spelling,  since the google geocoding system allows to make 2.5k queries per day.
 ```{r}
