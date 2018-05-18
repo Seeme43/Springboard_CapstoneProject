@@ -209,7 +209,7 @@ data_clean <- left_join(data_clean,finalcapgeocoding, by = "district_delivery")
 
 I have to **analyse the NA of these new variables**
 
-## Postal_codeNA
+### Postal_codeNA
 
 ```{r}
 postal_codeNA <- unique(postal_codeNA$district_delivery)
@@ -246,17 +246,19 @@ data_clean <- data_clean %>%
 
 ```
 
-## "Administrative_area_level_3"
+### "Administrative_area_level_3"
 
 I manage "administrative_area_level_3" and the the missing values in there
 
 ```{r}
 data_clean <- data_clean %>% select(-locality) %>%  rename("locality_delivery" = district_delivery, "district_delivery" = administrative_area_level_3)
 
-capunique <- data_clean %>% select(district_delivery, postal_code) 
 
-capunique <- group_by(capunique, postal_code) %>% summarise()   # 1) TO COMPLETE IT
-
+# CODE NOT NEEDED SO FAR ---------------------------------------------
+capunique <- data_clean %>% select(district_delivery, postal_code)   
+capunique <- unique(capunique)
+attempt <- left_join(data_clean, capunique, by = "postal_code")
+# ----------------------------------------------------------------------
 
 data_clean <- data_clean %>% 
               mutate_all(funs(tolower(.)))
