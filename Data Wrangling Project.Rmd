@@ -69,12 +69,10 @@ data_clean <- data_clean %>%  mutate(addresser_who = replace(addresser_who,is.na
 ```{r}
 data_clean %>% filter(is.na(address_delivery))   #in order to check which rows contain NA in the variable and decide how to manage it
 data_clean <- data_clean %>%  
-              mutate(address_delivery = replace(address_delivery,addresser_who == "giancarlo pagnoni", "villaggio badia,trav. seconda")) # I could see that "giancarlo pagnoni" 
-                                                                                                                                         # has lot of deliveries: in this way I have modified the NA using the address of the deliveries with no NA.
-
-# with data_clean <- data_clean %>% filter(!is.na(address_delivery))  I can delete the remaining NA rows
+              mutate(address_delivery = replace(address_delivery,addresser_who == "giancarlo pagnoni", "villaggio badia,trav. seconda")) # I could see that "giancarlo pagnoni" has lot of deliveries: in this way I have modified the NA using the address of the deliveries with no NA.
+data_clean <- data_clean %>%  mutate(address_delivery = replace(address_delivery,is.na(address_delivery), "UNKNOWN"))
 ```
-### QUESTION N.1: DO I HAVE A POSSIBILITY TO CHECK WHICH ADDRESSER APPEARS MORE TIME AND EVENTUALLY MODIFY IT WITH A CODE ? EX. using a FOR LOOP AND IF STATEMENT ?
+
 
 **3. driver_code**
 ```{r}
@@ -109,9 +107,6 @@ I create a variable to analyse
 district_distinct <- group_by(data_clean, district_delivery) %>% summarise()  
 ```
 
-### QUESTION N.2: IS THERE A WAY TO ANALYSE IF THERE IS AN EFFECTIVE CORRISPONDENCE BETWEEN THESE NAMES AND DISTRICTS IN BRESCIA? 
-#### Example, if I obtain a dataset with all the district of Brescia and I try to compare them ?). Because I have 468 district and I cannot know every district of this city. In doing so I could have this done by R and manage just the district that do not find correspondence.
-**Otherwise, I can work one per time but it would be an enormous waste of time**
 ```{r}
 data_clean <- data_clean %>% 
   mutate(district_delivery = sub(pattern = "roe.*" , "roe' volciano", district_delivery))
@@ -130,28 +125,141 @@ data_clean <- data_clean %>%
               # QUESTION N.3: MAYBE AVOID ALL THE PUNCTUATION WITH [:punct:] would work ?
 ```
 
-### QUESTION N.4: IS THIS THE BEST WAY TO HANDLE ADDRESS_DELIVERY ? LOOKS A TRUE MESS
-
 ----------------------------------------
 
 # 4. TURN ADDRESS INTO COORDINATES 
 
 In this particular case I have Two possibilities of approach:
 
-1) I *associate each district with its CAP* (the italian zip code) in order to perform my analysis within each CAP.  
+1) I **associate each district with its CAP** (the italian zip code) in order to perform my analysis within each CAP.  
 
 In order to do so, I add to each row of "district_distinct" the name "Brescia" that will be useful for the Google geocoding system to recover the necessary data regarding each district.
+
 ```{r}
 district_distinct <- district_distinct %>%  mutate(city = "Brescia") %>% unite(district_distinct, district_delivery, city, sep = "-" ) # IS THERE A SHORTER WAY ?
 
-district_distinct <- as.character(district_distinct)
+district_distinct$district_distinct <- as.character(district_distinct$district_distinct)
 
-district_googleinfo <- geocode(location = district_distinct, output = c("more"))  # IT WORKS IF I TAKE THEM SINGULARLY, NOT TOGETHER (it gives me error WTF)
+googlegeo <- geocode(location = district_distinct$district_distinct, output = c("more"))
 
-# AFTER THAT I WILL SELECT THE COLUMN "POSTAL_CODE" AND ASSOCIATE IT TO EACH DISTRICT IN MY DATA FRAME
+googlegeo <- googlegeo %>% select( locality, administrative_area_level_3,postal_code)
+
+googlegeo <- bind_cols(googlegeo, district_distinct)
+
+googlegeoNA <- filter(googlegeo, is.na(googlegeo$postal_code))
+
+googlegeoNA <- googlegeoNA %>%  select(district_distinct)
+
+googlegeoNA$district_distinct <- as.character(googlegeoNA$district_distinct)
+
+# -------- Repeat the operation to fill the NA
+
+googlegeo2 <- geocode(location = googlegeoNA$district_distinct, output = c("more"))
+
+googlegeo2 <- googlegeo2 %>% select( locality, administrative_area_level_3,postal_code)
+
+googlegeo2 <- bind_cols(googlegeo2, googlegeoNA)
+
+googlegeo2NA <- filter(googlegeo2, is.na(googlegeo2$postal_code)) 
+
+googlegeo2NA <- googlegeo2NA %>%  select(district_distinct)
+
+googlegeo2NA$district_distinct <- as.character(googlegeo2NA$district_distinct)
+
+# -------- Repeat the operation to fill the NA
+
+googlegeo3 <- geocode(location = googlegeo2NA$district_distinct, output = c("more")) 
+
+googlegeo3 <- googlegeo3 %>% select( locality, administrative_area_level_3,postal_code)
+
+googlegeo3 <- bind_cols(googlegeo3, googlegeo2NA)
+
+googlegeo3NA <- filter(googlegeo3, is.na(googlegeo3$postal_code)) 
+
+googlegeo3NA <- googlegeo3NA %>%  select(district_distinct)
+
+googlegeo3NA$district_distinct <- as.character(googlegeo3NA$district_distinct)
+
+# -------- Repeat the operation to fill the NA
+
+googlegeo4 <- geocode(location = googlegeo3NA$district_distinct, output = c("more")) 
+
+googlegeo4 <- googlegeo4 %>% select( locality, administrative_area_level_3,postal_code)
+
+googlegeo4 <- bind_cols(googlegeo4, googlegeo3NA)
+
+# OPERATION NECESSARY TO OBTAIN A COMPLETE DATAFRAME
+
+googlegeo1_clean <- googlegeo %>% filter(!is.na(googlegeo$postal_code))
+
+googlegeo2_clean <- googlegeo2 %>% filter(!is.na(googlegeo2$postal_code))
+
+googlegeo3_clean <- googlegeo3 %>% filter(!is.na(googlegeo3$postal_code))
+
+finalcapgeocoding <- bind_rows(googlegeo1_clean,googlegeo2_clean,googlegeo3_clean,googlegeo4)
+
+finalcapgeocoding <- finalcapgeocoding %>% mutate(district_distinct = gsub(pattern = "-Brescia$", replacement = "",district_distinct))
+
+finalcapgeocoding <- finalcapgeocoding %>% rename( "district_delivery" = district_distinct )
+
+data_clean <- left_join(data_clean,finalcapgeocoding, by = "district_delivery")
 
 
-revgeo <- revgeocode(location = as.numeric(..), output = c("more")) # TECHNICALLY I WILL NOT NEED THIS AS I HAVE ALREADY SET THE FUNCTION GEOCODE IN OUTPUT =  "MORE"
+```
+
+I have to **analyse the NA of these new variables**
+
+## Postal_codeNA
+
+```{r}
+postal_codeNA <- unique(postal_codeNA$district_delivery)
+View(postal_codeNA)
+```
+
+I manually fill in the missing values
+
+```{r}
+
+data_clean <- data_clean %>% 
+  mutate(postal_code = replace(postal_code, district_delivery == "ghedi", "25016") , 
+           postal_code = replace(postal_code, district_delivery == "san faustino", "25070") , 
+           postal_code = replace(postal_code, district_delivery == "agnosine", "25071"),
+           postal_code = replace(postal_code, district_delivery == "tavernole sul mella", "25060"),
+         postal_code = replace(postal_code, district_delivery== "pezzo", "25056"),
+         postal_code = replace(postal_code, district_delivery== "corzano", "25030"),
+         postal_code = replace(postal_code, district_delivery== "san felice del benaco", "25010"),
+         postal_code = replace(postal_code, district_delivery== "fornaci", "25131"),
+         postal_code = replace(postal_code, district_delivery== "gardone riviera", "25083"),
+         postal_code = replace(postal_code, district_delivery== "pregno", "25069"),
+         postal_code = replace(postal_code, district_delivery== "gazzane", "25070"),
+         postal_code = replace(postal_code, district_delivery== "toscolano m.", "25088"),
+         postal_code = replace(postal_code, district_delivery== "lugana", "25019"),
+         postal_code = replace(postal_code, district_delivery== "mandolossa", "25030"),
+         postal_code = replace(postal_code, district_delivery== "brescia", "25121/25136"),
+         postal_code = replace(postal_code, district_delivery== "lido di lonato", "25017"),
+         postal_code = replace(postal_code, district_delivery== "badia", "25132"),
+         postal_code = replace(postal_code, district_delivery== "corona", "25079"),
+         postal_code = replace(postal_code, district_delivery== "tovo", "25088"),
+         postal_code = replace(postal_code, is.na(postal_code), "UNKNOWN"),
+         postal_code = replace(postal_code, postal_code == "30016", "UNKNOWN"),
+         postal_code = replace(postal_code, postal_code == "V9410", "UNKNOWN"))
+
+```
+
+## "Administrative_area_level_3"
+
+I manage "administrative_area_level_3" and the the missing values in there
+
+```{r}
+data_clean <- data_clean %>% select(-locality) %>%  rename("locality_delivery" = district_delivery, "district_delivery" = administrative_area_level_3)
+
+capunique <- data_clean %>% select(district_delivery, postal_code) 
+
+capunique <- group_by(capunique, postal_code) %>% summarise()   # 1) TO COMPLETE IT
+
+
+data_clean <- data_clean %>% 
+              mutate_all(funs(tolower(.)))
 
 ```
 
@@ -160,7 +268,7 @@ revgeo <- revgeocode(location = as.numeric(..), output = c("more")) # TECHNICALL
 
 In this case it is necessary to reduce the variable address_distinct to its minimum, ensuring to have optimally fixed the differences of spelling,  since the google geocoding system allows to make 2.5k queries per day.
 ```{r}
-# SAME THAN BEFORE
+# NOT STRICTLY NECESSARY SO FAR
 ```
 
 
@@ -183,7 +291,7 @@ data_clean <- data_clean %>% mutate(dep_to_bs = as.Date( x = dep_to_bs, format =
 
 _ Obtain the variable "weekday_deliv"
 ```{r}
-data_clean <- data_clean %>% mutate(weekday_deliv = format(delivery_date, "%a"))  # FIX ISSUE: DAYS EXPRESSED IN ITALIAN
+data_clean <- data_clean %>% mutate(weekday_deliv = format(delivery_date, "%a"))  
 ```
 
 
@@ -216,7 +324,7 @@ _ Convert character string to time regarding the variable "pickup_time"
 (The following section code needs to be improved)
 ```{r}
 data_clean <- data_clean %>% mutate(pickup_time =  as.POSIXct(x = data_clean$pickup_time, format = "%H:%M")) %>% 
-              mutate(pickup_time = gsub(pattern = "2018-05-16", replacement = "",x = pickup_time))                 #PROBABILY NOT THE BEST WAY AND THE                                                                                                                          PATTERN IS GOOD FOR TODAY, NOT AFTER.
+              mutate(pickup_time = gsub(pattern = "2018-05-16", replacement = "",x = pickup_time))    
 data_clean <- data_clean %>% mutate(pickup_time = times(x = pickup_time))
 
 ```
@@ -239,9 +347,9 @@ data_clean$num_pack <- as.numeric(data_clean$num_pack)
 # SUMMARY: CREATE NEW DATAFRAMES USEFUL FOR MY ANALYSIS
 
 ```{r}
-# TO BE COMPLETED DURING THE ANALYSIS
+
+dataexploratory <-  data_clean %>% select(-dep_to_bs, - arr_to_bs, month_deliv, - year_deliv, - sender_who, - pickup_who)
+
+# TO BE COMPLETED DURING THE EXPLORATORY ANALYSIS
 ```
-
-
-
 
