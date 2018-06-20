@@ -30,7 +30,7 @@ library(ggthemes)
 
 The data frame and the plot obtained by the codes below can be summarised as following:
 
-```{r, include= TRUE}
+```{r, echo = FALSE}
 data_exploratory$num_pack <- as.numeric(data_exploratory$num_pack)
 deliveries_day_driver <- data_exploratory %>% group_by(driver_code,day_deliv) %>% summarise(tot_deliveries = sum(delivery)) 
 summary(deliveries_day_driver)
