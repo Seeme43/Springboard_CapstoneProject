@@ -1,0 +1,77 @@
+---
+title: "Data Exploratory Analysis"
+author: "Simone Zanetti"
+date: "19/6/2018"
+output: html_document
+---
+
+
+The following section provides an exploratory analysis of the data available for this project.
+At first, a generic analysis of the company will be performed to observe the situation and address eventual trends. 
+After that, aggregate data will be created in order to obtain the dependent variable of interest which is the ratio between deliveries and number of worked hours. Each dependent variable is referred to a driver, that is the statistical unit of this analysis.
+In conclusion, an analysis of the relationship between the y - dependent variable - and each independent variable will be performed in order to analyse the situation.
+
+The following codes need a series of packages to be installed in order to perform the analysis:
+
+```{r}
+library(tidyr)
+library(dplyr)
+library(chron)
+library(ggmap)
+library(ggplot2)
+library(ggplot2)
+library(ggthemes)
+
+```
+
+# GENERICAL TREND OF THE COMPANY
+
+## DAYS OF THE MONTH
+
+The data frame and the plot obtained by the codes below can be summarised as following:
+
+```{r}
+data_exploratory$num_pack <- as.numeric(data_exploratory$num_pack)
+deliveries_day_driver <- data_exploratory %>% group_by(driver_code,day_deliv) %>% summarise(tot_deliveries = sum(delivery)) 
+summary(deliveries_day_driver)
+
+
+day_plot <- ggplot(data = data_exploratory, aes(x = day_deliv, fill = "indianred2")) + 
+  theme_solarized_2() 
+day_plot  + geom_bar() +  labs(title = "total deliveries per month", x = "days of the month") + guides(fill = FALSE)  
+
+
+```
+
+The bar chart shows two aspect of the analysis that need to be fixed:
+1) For future analysis based on the day of the week there are one Tuesday and One Friday more than any other weekday. 
+2) The Tuesday 20 corresponds to a strike that took place in Brescia. As a consequence, deliveries that day have been limited and apparently redistribuited in the following days causing an increase on the number of deliveries the following days.
+
+This issue can cause problems in the moment where an analysis of the day of the week will be performed and as a consequence solutions will be provided in the following section.
+
+
+```{r}
+stronger_day <- stronger_day_driver %>% group_by(day_deliv) %>% summarise(tot_deliveries = sum(tot_deliveries)) 
+stronger_day <- stronger_day %>% arrange(desc(tot_deliveries))
+
+head(stronger_day)
+tail(stronger_day)
+summary(stronger_day)
+
+```
+
+
+The chart shows the 21, 23 and 22 to be the days with more deliveries and this is apparently coherent with the fact that the 20 March a strike paralized the normal activity of the company.
+The Mean of deliveries per day is 5441 with a Median of 6984 suggesting a distribution skewed to the left.
+
+## ANALYSIS OF WEEKDAYS
+
+
+*Use the Mean*
+
+```{r}
+
+```
+
+
+
