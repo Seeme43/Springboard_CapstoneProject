@@ -553,7 +553,10 @@ aggregate_data4 <- aggregate_data4 %>% rename("not_delivered" = rientri,
                                               "pickup_services" = ritiri,
                                               "pickup_packs" = spd_rit )
 
+
+
 save(aggregate_data4, file = "aggregate_data4.RData")
+save(data_exploratory, file = "Data_exploratory.RData")
 ```
 
 
