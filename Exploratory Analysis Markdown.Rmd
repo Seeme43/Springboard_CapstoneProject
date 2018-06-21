@@ -3,6 +3,7 @@ title: "Data Exploratory Analysis"
 author: "Simone Zanetti"
 date: "19/6/2018"
 output: html_document
+ 
 ---
 
 
@@ -53,7 +54,7 @@ This issue can cause problems in the moment where an analysis of the day of the 
 
 
 ```{r}
-stronger_day <- stronger_day_driver %>% group_by(day_deliv) %>% summarise(tot_deliveries = sum(tot_deliveries)) 
+stronger_day <- deliveries_day_driver %>% group_by(day_deliv) %>% summarise(tot_deliveries = sum(tot_deliveries)) 
 stronger_day <- stronger_day %>% arrange(desc(tot_deliveries))
 
 head(stronger_day)
@@ -209,8 +210,8 @@ strongerarea_plot + geom_density()+guides(fill = F)+ scale_x_continuous(limits =
 ```
 
 As shown below, we can observe a right skewed distribution whose Mean of deliveries per Area is 1932.8.
-However, due to the fact that for the center of Brescia was not possible to obtain one postal code because it has different postal codes the observation "25121/25136" represents an important outlier of this distribution. For this, the number of monthly deliveries is 31846, against the number of the second maximum postal code of deliveries which is 25020 (an area south of Brescia which includes different important district of the city). For the previously mentioned postal code, the number of deliveries is 9111. Third postal code is 25080 which is an area close to the Lake Garda, where commercial activities are really frequent.
-
+However, due to the fact that for the center of Brescia one postal code because was not possible to obtain, it has been identified with the observation "25121/25136". Thisrepresents an important outlier of this distribution. For this, the number of monthly deliveries is 31846, against the second postal code with maximum number of deliveries which is 9111. This postal code is (an area south of Brescia which includes different important district of the city). Third postal code is 25080 which is an area close to the Lake Garda, where commercial activities are really frequent.
+In this case, due to the aforementioned outlier the median of 1024.5 is more indicated to describe the tendency of this trend.
 
 
 ### SPLIT AREA 
@@ -220,6 +221,11 @@ From this point of view, it will be expected to have more traffic and poins of d
 
 # --------
 
+At first, I will have to obtain the coordinates of each postal code.
+
+
+
+Secondly, I will obtain the distances between points and the center of Brescia.
 
 
 
@@ -229,10 +235,8 @@ From this point of view, it will be expected to have more traffic and poins of d
 
 
 
-#-------
+# -------
 
-
-### ANALYSIS OF THE DRIVERS
 
 # ANALYSIS OF INDEPENDENT VARIABLE Y
 
@@ -355,7 +359,7 @@ pickedup_plot + geom_density(fill = "indianred2", alpha = 0.7) + theme_economist
 
 ## TOTAL ARRIVED PACKS PER DRIVER 
 
-```{r}
+```{r, message=FALSE}
 aggregate_data7 <- aggregate_data4 %>% group_by(driver_code) %>% summarise(packarrived_total = sum(pack_arrived))
 setdiff(aggregate_data7$driver_code, aggregate_data2$driver_code)
 aggregate_data7 <- aggregate_data7 %>% filter( driver_code != "851", driver_code != "805")
@@ -411,4 +415,81 @@ aggregate_data_last$`aggregate_data3$day_worked` <- NULL
 ```
 
 
+# ANALYSIS OF THE DEPENDENT VARIABLE COMPARED TO THE INDEPENTENT VARIABLES
+
+## Y AND PICKED UP PACKS
+
+```{r}
+y_pickedup_plot<- ggplot(data = aggregate_data_last, aes(x = pickedup_total,y = y))+ theme_solarized_2()+
+  labs(title = "deliveries per hour and picked up services", x =  "picked up" )
+
+# 
+
+y_pickedup_plot + geom_point()+ geom_smooth()
+
+```
+
+
+## Y AND DAY WORKED
+
+```{r}
+y_dayworked_plot<- ggplot(data = aggregate_data_last, aes(x = day_worked,y = y))+ theme_solarized_2()+
+  labs(title = "deliveries per hour and day worked", x =  "day worked" )
+
+y_dayworked_plot + geom_point() + geom_smooth() + scale_x_continuous(limits = c(15,25))
+y_dayworked_plot + geom_point() + geom_smooth() 
+
+```
+
+
+
+## Y AND TOT PACK LOADED
+
+
+```{r}
+y_packloaded_plot<- ggplot(data = aggregate_data_last, aes(x = tot_packloaded,y = y))+ theme_solarized_2()+
+  labs(title = "deliveries per hour and total pack loaded", x =  "pack loaded" )
+
+y_packloaded_plot + geom_point() + geom_smooth()+ scale_x_continuous(limits = c(1500, 2500))
+y_packloaded_plot + geom_point() + geom_smooth()
+
+```
+
+
+## Y AND PACK ARRIVED TOTAL
+
+```{r}
+y_packarrived_plot<- ggplot(data = aggregate_data_last, aes(x = packarrived_total,y = y))+ theme_solarized_2()+
+  labs(title = "deliveries per hour and total pack arrived", x =  "pack arrived" )
+
+y_packarrived_plot + geom_point() + geom_smooth()
+
+
+```
+
+
+## Y AND WEIGHT TOTAL
+
+```{r}
+y_weight_plot<- ggplot(data = aggregate_data_last, aes(x = tot_weight_pack,y = y))+ theme_solarized_2()+
+  labs(title = "deliveries per hour and total weight of packs", x =  "weight of packs" )
+
+y_weight_plot + geom_point() + geom_smooth()
+
+```
+
+Some driver result in a lower weight due to a lower amount of worked day.
+As a consequence, I should divide the weight for the number of day worked.
+
+```{r}
+y_weight_dayworked_plot<- ggplot(data = aggregate_data_last, aes(x = tot_weight_pack/day_worked,y = y))+ theme_solarized_2()+
+  labs(title = "deliveries per hour and total weight of packs", x =  "weight of packs" )
+
+y_weight_dayworked_plot + geom_point() + geom_smooth()+   scale_x_continuous(limits = c(250,1000))
+y_weight_dayworked_plot + geom_point() + geom_smooth()
+
+```
+
+
+## Y AND AREA OF DELIVERY 
 
