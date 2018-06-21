@@ -44,6 +44,24 @@ Each variable of the dataset is below summarised and described, but before is im
 *ORA*         | The hour in which the delivery has been done.
 
 
+
+## UPDATE: NEW DATA 
+
+During the activity of explorative analysis the necessity of new variables came up. The client has been very helpful providing a new data useful for this purpose. In the following the most important:
+
+**VARIABLES**   |**DESCRIPTION**
+-------------   | --------------
+*PACK LOADED*   | Not every package on the truck is successfully delivered. It represents the total of packages loaded on the truck.
+*PACK ARRIVED*  | Every pack arriving from other cities is automatically assigned to a driver and its area. So it representes the total of packs arrived the morning for that specific area.
+*NOT DELIVERED* | The number of packages not delivered during that day. (Pack loaded - pack delivered )
+*KG DELIVERED*  | The total amount of Kg delivered.
+*PICKEDUP_SERVICES* | The number of time the driver performed a picking up of packages.
+*DAY*           | It represents the day of the month of the activity.
+
+In this dataframe each row is the summary of the activity of each driver per each day of the month.
+
+
+
 ## THE GOAL OF THE ANALYSIS
 
 The activity of the company and the dataset that has been made available for the
