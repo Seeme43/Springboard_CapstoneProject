@@ -5,6 +5,13 @@ date: "10/5/2018"
 output: html_document
 ---
 
+By the end of this phase, the two vital dataset for the next phases will be the following:
+
+**1) data_exploratory**
+
+**2) aggregate_data_last**
+
+
 ```{r}
 library(tidyr)
 library(dplyr)
@@ -244,6 +251,8 @@ data_clean <- data_clean %>%
          postal_code = replace(postal_code, postal_code == "30016", "UNKNOWN"),
          postal_code = replace(postal_code, postal_code == "V9410", "UNKNOWN"))
 
+
+data_exploratory <- filter(data_exploratory, data_exploratory$postal_code != "20020")
 ```
 
 ### "Administrative_area_level_3"
@@ -327,7 +336,7 @@ _ Convert character string to time regarding the variable "pickup_time"
 (The following section code needs to be improved)
 ```{r}
 data_clean <- data_clean %>% mutate(pickup_time =  as.POSIXct(x = data_clean$pickup_time, format = "%H:%M")) %>% 
-              mutate(pickup_time = gsub(pattern = "2018-05-16", replacement = "",x = pickup_time))    
+              mutate(pickup_time = gsub(pattern = "2018-06-03", replacement = "",x = pickup_time))    
 data_clean <- data_clean %>% mutate(pickup_time = times(x = pickup_time))
 
 ```
@@ -338,21 +347,201 @@ _ Create a variable to perform operation with hours, converting each hour in min
 ```
 
 
-# 7.CONVERT NECESSARY VARIABLES INTO NUMERICS
+# 7.CONVERT NECESSARY VARIABLES 
 
 ```{r}
+data_clean <- data_clean %>% mutate(weight_pack = gsub(pattern = ",",replacement = ".", x = weight_pack))
+data_clean$weight_pack <- as.double(data_clean$weight_pack)
+class(data_clean$weight_pack)
 
-data_clean$weight_pack <- 
 data_clean$num_pack <- as.numeric(data_clean$num_pack)
+data_clean$weekday_deliv <- factor(x = data_clean$weekday_deliv, levels = c("lun","mar","mer","gio","ven","sab"))
 ```
+
+# 8.DELETE UNNECESSARY DRIVER, after a confrontation with the client
+
+```{r}
+data_clean <- data_clean %>% filter(driver_code != "208" & driver_code != "234"& driver_code != "260" & driver_code != "336" & driver_code != "404" & driver_code != "534" & driver_code != "535" & driver_code != "623"  & driver_code != "132")
+```
+
 
 
 # SUMMARY: CREATE NEW DATAFRAMES USEFUL FOR MY ANALYSIS
 
 ```{r}
 
-dataexploratory <-  data_clean %>% select(-dep_to_bs, - arr_to_bs, month_deliv, - year_deliv, - sender_who, - pickup_who)
+data_exploratory <-  data_clean %>% select(-dep_to_bs, - arr_to_bs, month_deliv, - year_deliv, - sender_who, - pickup_who)
 
 # TO BE COMPLETED DURING THE EXPLORATORY ANALYSIS
+```
+
+
+## --------------------------------------------------------------------------------
+
+
+# CLEAN THE NEW DATASET OBTAINED FROM THE CLIENT
+
+Each day of the month has been provided from the client in a different dataset, with the same variable.
+By the end of this phase each day will be merged in a final dataset.
+
+```{r}
+library(readr)
+Giornaliere_2018_03_01 <- read_delim("~/Desktop/March tot/Giornaliere-2018-03-01.csv", 
+                                     ";", escape_double = FALSE, locale = locale(encoding = "ISO-8859-1"), 
+                                     trim_ws = TRUE)
+Giornaliere_2018_03_02 <- read_delim("~/Desktop/March tot/Giornaliere-2018-03-02.csv", 
+                                     ";", escape_double = FALSE, locale = locale(encoding = "ISO-8859-1"), 
+                                     trim_ws = TRUE)
+Giornaliere_2018_03_05 <- read_delim("~/Desktop/March tot/Giornaliere-2018-03-05.csv", 
+                                     ";", escape_double = FALSE, locale = locale(encoding = "ISO-8859-1"), 
+                                     trim_ws = TRUE)
+Giornaliere_2018_03_06 <- read_delim("~/Desktop/March tot/Giornaliere-2018-03-06.csv", 
+                                     ";", escape_double = FALSE, locale = locale(encoding = "ISO-8859-1"), 
+                                     trim_ws = TRUE)
+Giornaliere_2018_03_07 <- read_delim("~/Desktop/March tot/Giornaliere-2018-03-07.csv", 
+                                     ";", escape_double = FALSE, locale = locale(encoding = "ISO-8859-1"), 
+                                     trim_ws = TRUE)
+Giornaliere_2018_03_08 <- read_delim("~/Desktop/March tot/Giornaliere-2018-03-08.csv", 
+                                     ";", escape_double = FALSE, locale = locale(encoding = "ISO-8859-1"), 
+                                     trim_ws = TRUE)
+Giornaliere_2018_03_09 <- read_delim("~/Desktop/March tot/Giornaliere-2018-03-09.csv", 
+                                     ";", escape_double = FALSE, locale = locale(encoding = "ISO-8859-1"), 
+                                     trim_ws = TRUE)
+Giornaliere_2018_03_12 <- read_delim("~/Desktop/March tot/Giornaliere-2018-03-12.csv", 
+                                     ";", escape_double = FALSE, locale = locale(encoding = "ISO-8859-1"), 
+                                     trim_ws = TRUE)
+Giornaliere_2018_03_13 <- read_delim("~/Desktop/March tot/Giornaliere-2018-03-13.csv", 
+                                     ";", escape_double = FALSE, locale = locale(encoding = "ISO-8859-1"), 
+                                     trim_ws = TRUE)
+Giornaliere_2018_03_14 <- read_delim("~/Desktop/March tot/Giornaliere-2018-03-14.csv", 
+                                     ";", escape_double = FALSE, locale = locale(encoding = "ISO-8859-1"), 
+                                     trim_ws = TRUE)
+Giornaliere_2018_03_15 <- read_delim("~/Desktop/March tot/Giornaliere-2018-03-15.csv", 
+                                     ";", escape_double = FALSE, locale = locale(encoding = "ISO-8859-1"), 
+                                     trim_ws = TRUE)
+Giornaliere_2018_03_16 <- read_delim("~/Desktop/March tot/Giornaliere-2018-03-16.csv", 
+                                     ";", escape_double = FALSE, locale = locale(encoding = "ISO-8859-1"), 
+                                     trim_ws = TRUE)
+Giornaliere_2018_03_19 <- read_delim("~/Desktop/March tot/Giornaliere-2018-03-19.csv", 
+                                     ";", escape_double = FALSE, locale = locale(encoding = "ISO-8859-1"), 
+                                     trim_ws = TRUE)
+Giornaliere_2018_03_20 <- read_delim("~/Desktop/March tot/Giornaliere-2018-03-20.csv", 
+                                     ";", escape_double = FALSE, locale = locale(encoding = "ISO-8859-1"), 
+                                     trim_ws = TRUE)
+Giornaliere_2018_03_21 <- read_delim("~/Desktop/March tot/Giornaliere-2018-03-21.csv", 
+                                     ";", escape_double = FALSE, locale = locale(encoding = "ISO-8859-1"), 
+                                     trim_ws = TRUE)
+Giornaliere_2018_03_22 <- read_delim("~/Desktop/March tot/Giornaliere-2018-03-22.csv", 
+                                     ";", escape_double = FALSE, locale = locale(encoding = "ISO-8859-1"), 
+                                     trim_ws = TRUE)
+Giornaliere_2018_03_23 <- read_delim("~/Desktop/March tot/Giornaliere-2018-03-23.csv", 
+                                     ";", escape_double = FALSE, locale = locale(encoding = "ISO-8859-1"), 
+                                     trim_ws = TRUE)
+Giornaliere_2018_03_26 <- read_delim("~/Desktop/March tot/Giornaliere-2018-03-26.csv", 
+                                     ";", escape_double = FALSE, locale = locale(encoding = "ISO-8859-1"), 
+                                     trim_ws = TRUE)
+Giornaliere_2018_03_27 <- read_delim("~/Desktop/March tot/Giornaliere-2018-03-27.csv", 
+                                     ";", escape_double = FALSE, locale = locale(encoding = "ISO-8859-1"), 
+                                     trim_ws = TRUE)
+Giornaliere_2018_03_28 <- read_delim("~/Desktop/March tot/Giornaliere-2018-03-28.csv", 
+                                     ";", escape_double = FALSE, locale = locale(encoding = "ISO-8859-1"), 
+                                     trim_ws = TRUE)
+Giornaliere_2018_03_29 <- read_delim("~/Desktop/March tot/Giornaliere-2018-03-29.csv", 
+                                     ";", escape_double = FALSE, locale = locale(encoding = "ISO-8859-1"), 
+                                     trim_ws = TRUE)
+Giornaliere_2018_03_30 <- read_delim("~/Desktop/March tot/Giornaliere-2018-03-30.csv", 
+                                     ";", escape_double = FALSE, locale = locale(encoding = "ISO-8859-1"), 
+                                     trim_ws = TRUE)
+
+
+
+# ERASING UNUSEFUL ROWS
+
+day1 <- Giornaliere_2018_03_01[-c(1:5),]
+day2 <- Giornaliere_2018_03_02[-c(1:5),]
+day5 <- Giornaliere_2018_03_05[-c(1:5),]
+day6 <- Giornaliere_2018_03_06[-c(1:5),]
+day7 <- Giornaliere_2018_03_07[-c(1:5),]
+day8 <- Giornaliere_2018_03_08[-c(1:5),]
+day9 <- Giornaliere_2018_03_09[-c(1:5),]
+day12 <- Giornaliere_2018_03_12[-c(1:5),]
+day13 <- Giornaliere_2018_03_13[-c(1:5),]
+day14 <- Giornaliere_2018_03_14[-c(1:5),]
+day15<- Giornaliere_2018_03_15[-c(1:5),]
+day16 <- Giornaliere_2018_03_16[-c(1:5),]
+day19 <- Giornaliere_2018_03_19[-c(1:5),]
+day20 <- Giornaliere_2018_03_20[-c(1:5),]
+day21<- Giornaliere_2018_03_21[-c(1:5),]
+day22<- Giornaliere_2018_03_22[-c(1:5),]
+day23 <- Giornaliere_2018_03_23[-c(1:5),]
+day26 <- Giornaliere_2018_03_26[-c(1:5),]
+day27<- Giornaliere_2018_03_27[-c(1:5),]
+day28<- Giornaliere_2018_03_28[-c(1:5),]
+day29<- Giornaliere_2018_03_29[-c(1:5),]
+day30 <- Giornaliere_2018_03_30[-c(1:5),]
+
+
+# ADDING A NEW VARIABLE THAT WILL HELP TO IDENTIFY THE DAY ONCE THE DATAFRAME WILL BE MERGED TOGETHER
+
+day1$day <- "1"
+day2$day <- "2"
+day5$day <- "5"
+day6$day <- "6"
+day7$day <- "7"
+day8$day <- "8"
+day9$day <- "9"
+day12$day <- "12"
+day13$day <- "13"
+day14$day <- "14"
+day15$day <- "15"
+day16$day <- "16"
+day19$day <- "19"
+day20$day <- "20"
+day21$day <- "21"
+day22$day <- "22"
+day23$day <- "23"
+day26$day <- "26"
+day27$day <- "27"
+day28$day <- "28"
+day29$day <- "29"
+day30$day <- "30"
+
+
+# MERGE THE DATA TOGETHER
+
+library(dplyr)
+
+new_datagls <- bind_rows(day1,day2,day5,day6,day7,day8,day9,day12,day13,day14,day15,day16,day19,day20,day21,day22,day23,day26,day27,day28,day29,day30)
+
+new_datagls <- new_datagls %>% select(-simulazione,-o,-zona,-nolo)
+
+# - - - - - - - - - - - - - - - - - - --  
+
+
+library(tidyr)
+
+new_datagls <- new_datagls %>% mutate(autista = sub(pattern = "\\s", replacement = "-", x = autista))
+new_datagls <- new_datagls %>% separate(autista, c("driver_code", "driver_name"), sep = "-")
+
+
+data1 <- data_clean %>% select(driver_code)
+data1 <- unique(data1)
+data3 <- setdiff(data2, data1)
+
+newdatagls_noRT <- new_datagls %>% filter(new_datagls$sedi != "RT")   # Most of the driver codes that I did not need were from another factory
+
+
+newdatagls_noRT <- newdatagls_noRT %>% rename("pack_loaded" = consegne)
+RitiriNew <- RitiriNew  %>% filter(zrn_rit_prov == "BS")
+
+
+aggregate_data4 <- newdatagls_noRT 
+aggregate_data4 <- aggregate_data4 %>% rename("not_delivered" = rientri,
+                                              "kg_delivered" = kg_cons,
+                                              "pack_arrived" = arrivi,
+                                              "pickup_services" = ritiri,
+                                              "pickup_packs" = spd_rit )
+
+save(aggregate_data4, file = "aggregate_data4.RData")
 ```
 
