@@ -7,9 +7,12 @@ output: html_document
 
 By the end of this phase, the two vital dataset for the next phases will be the following:
 
-**1) data_exploratory**
+1) data_exploratory
 
-**2) aggregate_data_last**
+2) aggregate_data_last
+
+
+## PRELIMINARY PHASE: UPLOAD LIBRARIES AND IMPORT THE RAW FILE (Data_clean)
 
 
 ```{r}
@@ -21,7 +24,10 @@ library(ggmap)
 ```
 
 ```{r}
+ 
+# IMPORT THE FILE and name it data_clean
 data_clean <- 
+  
 ```
               
 # ERASE THE FIRST ROW THAT IS NOT RELEVANT TO MY DATASET
