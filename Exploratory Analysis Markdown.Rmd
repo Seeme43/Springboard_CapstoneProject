@@ -22,6 +22,8 @@ library(ggplot2)
 library(ggplot2)
 library(ggthemes)
 
+load("Data_exploratory.RData")
+
 ```
 
 # GENERICAL TREND OF THE COMPANY
@@ -87,7 +89,7 @@ weekday_plot + geom_bar()
 As aforementioned described, these data can be misleading due to the reasons previously described.
 To overcome this, two possibilites:
 
-** 1) Use the Mean**
+###1) Use the Mean
 
 ```{r}
 weekday_mean <- stronger_weekday_driver %>% group_by(weekday_deliv) %>% summarise(mean = mean(n())) 
@@ -98,5 +100,315 @@ weekday_mean_plot <- ggplot(data = weekday_mean, aes(x = weekday_deliv, y = mean
 weekday_mean_plot + geom_col()+ labs(title = "mean of deliveries per weekday", x = "weekdays") + guides(fill = FALSE)
   
 ```
+
+The new graph shows a more leveled situation. The Saturday results the day with less deliveries, as expectable by the fact that the company works only the morning.
+
+
+###2) WORK WITH COMPLETE WEEKS ONLY 
+
+I erase the first two days of the month in order to obtain just complete weeks, from Monday to Saturday.
+```{r}
+data_strongerweekdays <- data_exploratory %>% filter(data_exploratory$day_deliv != "01",
+                                                     data_exploratory$day_deliv != "02",
+                                                     data_exploratory$day_deliv != "03")
+
+
+weekday2_plot <- ggplot(data = data_strongerweekdays, aes(x = weekday_deliv, fill = "indianred2")) + 
+  theme_solarized_2()
+weekday2_plot + geom_bar()+ labs(title = "deliveries per weekday", x = "weekdays") + guides(fill = FALSE)
+
+```
+
+The following codes aimed to deepen the analysis to observe if weekdays can be significantly influenced by other variables such as the driver, the day of delivery and the range of hour.
+
+```{r}
+weekday2_plot + aes(fill = driver_code) + geom_bar(position = "fill")
+weekday2_plot + aes(fill = day_deliv) + geom_bar(position = "fill")
+weekday2_plot + aes(fill = range_hours) + geom_bar(position = "fill") 
+```
+
+
+## ANALYSIS OF THE TIME OF DELIVERY
+
+### Creating of Range Hours from the variable pickedup_time
+
+```{r}
+data_exploratory = data_exploratory %>% mutate(range_hours = sub(pattern = "^08.*", replacement = "8_9",x = pickup_time),
+                                               range_hours = sub(pattern = "^09.*", replacement = "9_10",x = range_hours),
+                                               range_hours = sub(pattern = "^10.*", replacement = "10_11",x = range_hours),
+                                               range_hours = sub(pattern = "^11.*", replacement = "11_12",x = range_hours),
+                                               range_hours = sub(pattern = "^12.*", replacement = "12_13",x = range_hours),
+                                               range_hours = sub(pattern = "^13.*", replacement = "13_14",x = range_hours),
+                                               range_hours = sub(pattern = "^14.*", replacement = "14_15",x = range_hours),
+                                               range_hours = sub(pattern = "^15.*", replacement = "15_16",x = range_hours),
+                                               range_hours = sub(pattern = "^16.*", replacement = "16_17",x = range_hours),
+                                               range_hours = sub(pattern = "^17.*", replacement = "17_18",x = range_hours),
+                                               range_hours = sub(pattern = "^18.*", replacement = "18_19",x = range_hours),
+                                               range_hours = sub(pattern = "^19.*", replacement = "19_20",x = range_hours),
+                                               range_hours = sub(pattern = "^20.*", replacement = "20_21",x = range_hours))
+
+
+
+
+
+unique(data_exploratory$range_hours)
+
+data_exploratory = data_exploratory %>% filter(range_hours != "20_21" & range_hours != "06:51:00")   
+
+data_exploratory$range_hours <- factor(x = data_exploratory$range_hours, levels = c("8_9","9_10","10_11","11_12","12_13","13_14","14_15","15_16","16_17","17_18","18_19", "19_20"))
+
+```
+
+
+```{r}
+stronger_hour <- data_exploratory %>% group_by(driver_code,range_hours) %>% summarise(tot_deliveries = sum(delivery))
+
+data_strongerhours <- data_exploratory %>% filter(data_exploratory$day_deliv != "01",
+                                                  data_exploratory$day_deliv != "02",
+                                                  data_exploratory$day_deliv != "20")
+
+
+strongerhour_plot <- ggplot(data = data_strongerhours, aes(x = range_hours, fill= "indianared2")) + theme_solarized()+ 
+  labs(title = "deliveries per hour", x = "range of hours") 
+
+strongerhour_plot + geom_bar() +  guides(fill = FALSE)
+
+```
+
+The plot shows a peak of deliveries on the range between 11 am and 12 pm.
+After that range, the curve regularly decreases until the end of the day with the exepction of the range between 13 and 14, where the number of deliveries decreases before to increase again on the following range. 
+From this point of view, the morning between 10 and 13 the majority of the deliveres are done.
+
+```{r}
+strongerhour_plot + aes(fill = weekday_deliv) + geom_bar(position = "fill")
+strongerhour_plot + geom_bar() + facet_grid(.~data_strongerhours$weekday_deliv)+  guides(fill = FALSE)
+
+ggplot(data = stronger_hour, aes(x = range_hours, y = tot_deliveries))+ geom_boxplot()
+
+```
+
+The trend seems to suggest a different attitude of deliveries during the day based on the type of day of the week.
+In particular, Monday is the day where the majority of deliveries between 8 and 9 am are performed.
+
+
+## ANALYSIS OF THE AREA OF DELIVERY
+
+```{r}
+stronger_area <- data_exploratory %>% group_by(postal_code) %>% summarise(cnt = n()) %>% 
+                 arrange(desc(cnt))
+
+summary(stronger_area)
+head(stronger_area)
+tail(stronger_area)
+```
+
+```{r}
+strongerarea_plot <- ggplot(data = stronger_area, aes(x = cnt, fill= "indianared2")) + theme_solarized()+ 
+  labs(title = "deliveries per area", x = "postal code") 
+strongerarea_plot + geom_density()+guides(fill = F)+ scale_x_continuous(limits = c(0,10000))
+```
+
+As shown below, we can observe a right skewed distribution whose Mean of deliveries per Area is 1932.8.
+However, due to the fact that for the center of Brescia was not possible to obtain one postal code because it has different postal codes the observation "25121/25136" represents an important outlier of this distribution. For this, the number of monthly deliveries is 31846, against the number of the second maximum postal code of deliveries which is 25020 (an area south of Brescia which includes different important district of the city). For the previously mentioned postal code, the number of deliveries is 9111. Third postal code is 25080 which is an area close to the Lake Garda, where commercial activities are really frequent.
+
+
+
+### SPLIT AREA 
+
+The aim of this paragraph is to split postal codes into 3 different areas based on the distance between them and the center of Brescia. As imaginable, one of the factor that can really influence the performance of the drivers is the presence of traffic, and the distance of the points of delivery between each others.
+From this point of view, it will be expected to have more traffic and poins of delivery closer to each other in the center of Brescia and the opposite further from the city center.
+
+# --------
+
+
+
+
+
+
+
+
+
+
+#-------
+
+
+### ANALYSIS OF THE DRIVERS
+
+# ANALYSIS OF INDEPENDENT VARIABLE Y
+
+
+In the following section I will aggregate data in order to obtain the independent variable of this analysis, which is the relationship between deliveries and hours worked for each driver, that represent my statistical unit.
+By the end of this paragraph a data frame named aggregate_data_last will be obtained in order to conduct a machine learning analysis later on.
+
+
+## OBTAIN THE HOURS WORKED FOR EACH DRIVER AND RATIO DELIVERIES PER DAY WORKED
+
+```{r}
+data_exploratory <- na.omit(data_exploratory)
+data_exploratory <- data_exploratory %>% filter(driver_code != "208" & driver_code != "234"& driver_code != "260" & driver_code != "336" & driver_code != "404" & driver_code != "534" & driver_code != "535" & driver_code != "623"  & driver_code != "132")
+aggregate_data <- data_exploratory %>% group_by(driver_code, day_deliv, pickup_time, delivery) %>% summarise()
+
+# aggregate_data <- aggregate_data %>% filter(driver_code != "208" & driver_code != "234"& driver_code != "260" & driver_code != "336" & driver_code != "404" & driver_code != "534" & driver_code != "535" & driver_code != "623"  & driver_code != "132")
+
+aggregate_data$pickup_time <- as.character(aggregate_data$pickup_time)
+aggregate_data$pickup_time = as.POSIXlt(aggregate_data$pickup_time, format = "%H:%M:%S")
+
+class(aggregate_data$pickup_time)
+
+
+time_delivery <- rep(0,nrow(aggregate_data))
+
+# Turning time into the difference of minutes between every point of delivery for every driver 
+
+for (i in 1:(nrow(aggregate_data)-1)) {
+  if(aggregate_data$driver_code[i] == aggregate_data$driver_code[i+1])
+  {time_delivery[i] = difftime(aggregate_data$pickup_time[i], aggregate_data$pickup_time[i+1], units = "mins" ) }
+}
+
+time_delivery=ifelse(time_delivery>0,0,time_delivery)
+aggregate_data=aggregate_data[,-3]
+aggregate_data=cbind(aggregate_data,time_delivery)
+aggregate_data$time_delivery <- abs(aggregate_data$time_delivery)
+
+
+# sum the worked minutes per driver(minutes worked) and create a new variable based on hours (hours worked per driver)
+
+aggregate_data2 <- aggregate_data %>% group_by(driver_code) %>% summarise(tot_deliveries = sum(delivery), tot_minutes = sum(time_delivery))
+hours_delivery <- aggregate_data2$tot_minutes/60
+aggregate_data2 <- cbind(aggregate_data2, hours_delivery)
+
+y = aggregate_data2$tot_deliveries / aggregate_data2$hours_delivery
+aggregate_data2 <- cbind(aggregate_data2, y)
+
+# aggregate_data2 <- aggregate_data2 %>% filter(driver_code != "208" & driver_code != "234"& driver_code != "260" & driver_code != "336" & driver_code != "404" & driver_code != "534" & driver_code != "535" & driver_code != "623"  & driver_code != "132")
+
+# Now that I have the total of deliveries per driver and the Independent variable I can plot them to analyse the trend.
+
+summary(aggregate_data2$y)
+
+y_plot <- ggplot(data = aggregate_data2, aes(x = y))
+y_plot + geom_density(fill = "indianred2", alpha = 0.7) + theme_economist() + labs(title = "delivery hours ratio density")+ geom_vline(xintercept = 9.4412, size = 0.2)
+
+
+```
+
+The dependent variable y is represented by a left tailed distribution, with a mean of 9.4412 deliveries per hours.
+68% of the drivers owns a delivery hours ratio between ...
+
+
+```{r}
+
+aggregate_data$day_deliv <- as.numeric(aggregate_data$day_deliv)
+aggregate_data3 <- data_exploratory %>% group_by(driver_code) %>% summarise(day_worked = n_distinct(day_deliv))
+# aggregate_data3 <- aggregate_data3 %>% filter(driver_code != "208" & driver_code != "234"& driver_code != "260" & driver_code != "336" & driver_code != "404" & driver_code != "534" & driver_code != "535" & driver_code != "623"  & driver_code != "132")
+aggregate_data2 <- cbind(aggregate_data2, aggregate_data3$day_worked)
+
+
+dayworked_plot <- ggplot(data = aggregate_data3, aes(x = day_worked))
+dayworked_plot + geom_density(fill = "indianred2", alpha = 0.7) + theme_economist() + labs(title = "day worked density")
+
+```
+
+The curve ...
+
+
+## TOTAL PACK LOADED PER DRIVER
+
+```{r}
+load("aggregate_data4.Rdata") # Load a dataset previously cleaned during the wrangling phase. Dataset provided by the client later on
+
+# clean the data for the needs of this analysis
+aggregate_data4 <- aggregate_data4 %>% filter(driver_code != "208" & driver_code != "234"& driver_code != "260" & driver_code != "336" & driver_code != "404" & driver_code != "534" & driver_code != "535" & driver_code != "623"  & driver_code != "132",
+                                              driver_code != "1000", driver_code != "101", driver_code != "402")
+aggregate_data4 <- aggregate_data4 %>% mutate(driver_code = gsub(pattern = "8421", replacement = "421",x = driver_code),
+                                              driver_code = gsub(pattern = "8618",replacement = "618", x = driver_code),
+                                              driver_code = gsub(pattern = "8678", replacement = "678", x = driver_code),
+                                              driver_code = gsub(pattern = "8679", replacement = "679", x = driver_code),
+                                              driver_code = gsub(pattern = "8531", replacement = "531", x = driver_code))
+
+```
+
+
+```{r}
+aggregate_data5 <- aggregate_data4 %>% group_by(driver_code ) %>% summarise(tot_packloaded = sum(pack_loaded))
+setdiff(aggregate_data5$driver_code, aggregate_data2$driver_code)
+aggregate_data5 <- aggregate_data5 %>% filter(tot_packloaded > 0, driver_code != "851", driver_code != "805")
+
+
+packloaded_plot <- ggplot(data = aggregate_data5, aes(x = tot_packloaded))
+packloaded_plot +  geom_density(fill = "indianred2", alpha = 0.7) + theme_economist() + labs(title = "pack loaded density")
+```
+
+The curve...
+
+## TOTAL PICKED UP PACKS PER DRIVER 
+
+
+```{r}
+aggregate_data6 <- aggregate_data4 %>% group_by(driver_code) %>% summarise(pickedup_total = sum(pickup_services))
+aggregate_data6 <- aggregate_data6 %>% filter( driver_code != "851", driver_code != "805")
+
+
+pickedup_plot <- ggplot(data = aggregate_data6, aes(x = pickedup_total ))
+pickedup_plot + geom_density(fill = "indianred2", alpha = 0.7) + theme_economist() + labs(title = "picked up pack density")
+```
+
+## TOTAL ARRIVED PACKS PER DRIVER 
+
+```{r}
+aggregate_data7 <- aggregate_data4 %>% group_by(driver_code) %>% summarise(packarrived_total = sum(pack_arrived))
+setdiff(aggregate_data7$driver_code, aggregate_data2$driver_code)
+aggregate_data7 <- aggregate_data7 %>% filter( driver_code != "851", driver_code != "805")
+
+
+packarrived_plot <-ggplot(data = aggregate_data7, aes(x = packarrived_total ))
+packarrived_plot + geom_density(fill = "indianred2", alpha = 0.7) + theme_economist() + labs(title = "pack arrived tot density")
+
+```
+
+## TOTAL WEIGHT OF PACKS DELIVERED BY DRIVER 
+
+```{r}
+data_exploratory <- data_exploratory %>% mutate(weight_pack = gsub(pattern = ",",replacement = ".", x = weight_pack))
+data_exploratory$weight_pack <- as.double(data_exploratory$weight_pack)
+aggregate_data8 <- data_exploratory %>% group_by(driver_code, day_deliv) %>% summarise(sum(weight_pack))
+aggregate_data9 <- data_exploratory %>% group_by(driver_code) %>% summarise(tot_weight_pack = sum(weight_pack))
+
+
+summary(aggregate_data9)
+```
+
+```{r}
+weightpack_plot <-ggplot(data = aggregate_data9, aes(x = tot_weight_pack ))
+weightpack_plot + geom_density(fill = "indianred2", alpha = 0.7) + theme_economist() + labs(title = "total weight pack density")
+```
+
+
+## TOTAL PACKS NOT DELIVERED PER DRIVER 
+
+```{r}
+aggregate_data10 <- aggregate_data4 %>% group_by(driver_code) %>% summarise(packnotdelivered_total = sum(not_delivered))
+setdiff(aggregate_data10$driver_code, aggregate_data2$driver_code)
+aggregate_data10 <- aggregate_data10 %>% filter( driver_code != "851", driver_code != "805")
+
+
+nondelivered_plot <-ggplot(data = aggregate_data10, aes(x = packnotdelivered_total ))
+nondelivered_plot + geom_density(fill = "indianred2", alpha = 0.7) + theme_economist() + labs(title = "total non delivered packs density")
+```
+
+
+## OBTAINING AN AGGREGATE DATA FRAME WITH ALL THE NECESSARY VALUES
+
+```{r}
+aggregate_data_last <- left_join(aggregate_data2,aggregate_data3)
+aggregate_data_last <- left_join(aggregate_data_last, aggregate_data3)
+aggregate_data_last <- left_join(aggregate_data_last, aggregate_data5)
+aggregate_data_last <- left_join(aggregate_data_last, aggregate_data6)
+aggregate_data_last <- left_join(aggregate_data_last, aggregate_data7)
+aggregate_data_last <- left_join(aggregate_data_last, aggregate_data9)
+
+aggregate_data_last$`aggregate_data3$day_worked` <- NULL
+```
+
 
 
