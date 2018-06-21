@@ -515,7 +515,12 @@ new_datagls <- bind_rows(day1,day2,day5,day6,day7,day8,day9,day12,day13,day14,da
 
 new_datagls <- new_datagls %>% select(-simulazione,-o,-zona,-nolo)
 
-# - - - - - - - - - - - - - - - - - - --  
+```
+
+
+Cleaning phase:
+
+```{r}
 
 
 library(tidyr)
@@ -543,5 +548,8 @@ aggregate_data4 <- aggregate_data4 %>% rename("not_delivered" = rientri,
                                               "pickup_packs" = spd_rit )
 
 save(aggregate_data4, file = "aggregate_data4.RData")
+```
+
+
 ```
 
