@@ -44,15 +44,33 @@ Each variable of the dataset is below summarised and described, but before is im
 *ORA*         | The hour in which the delivery has been done.
 
 
+
+## UPDATE: NEW DATA 
+
+During the activity of explorative analysis the necessity of new variables came up. The client has been very helpful providing a new data useful for this purpose. In the following the most important:
+
+**VARIABLES**   |**DESCRIPTION**
+-------------   | --------------
+*PACK LOADED*   | Not every package on the truck is successfully delivered. It represents the total of packages loaded on the truck.
+*PACK ARRIVED*  | Every pack arriving from other cities is automatically assigned to a driver and its area. So it representes the total of packs arrived the morning for that specific area.
+*NOT DELIVERED* | The number of packages not delivered during that day. (Pack loaded - pack delivered )
+*KG DELIVERED*  | The total amount of Kg delivered.
+*PICKEDUP_SERVICES* | The number of time the driver performed a picking up of packages.
+*DAY*           | It represents the day of the month of the activity.
+
+In this dataframe each row is the summary of the activity of each driver per each day of the month.
+
+
+
 ## THE GOAL OF THE ANALYSIS
 
 The activity of the company and the dataset that has been made available for the
 analysis suggests a **necessity to assess the performance** of the process of delivery on the
-territory. In other words, the possibility to analyse if the activity is fully optimised may
-give to the client a new point of view to **eventually reorganise the approach and the work on the area where can proved a lack of performance**. In this perspective, with the data
+territory. In other words, the possibility to analyse if the activity of the drivers is fully optimised may
+give to the client a new point of view to **eventually reorganise the approach and the work based on the descriptive analysis and predictive model created**. In this perspective, with the data
 available it will be possibile to analyse the activity of each driver, identified with a specific
 code with the variable CODICE, which areas of the city can have the majority or minority
-of the deliveries, as well as which specific days or moment of the day can affect the
+of the deliveries, as well as if specific days or moment of the day can affect the
 performance, etc. At the end of the investigation, the client should be able to eventually
 provide the right modifications on the organisation of the deliveries in order to optimise
 the performance.
@@ -63,8 +81,8 @@ As regards the approach to follow on this investigation, there is a **preliminar
 analysis. In particular, each variable will be translated in English and modified with the
 purpose of making it clearer. Dplyr and Tidyr represent the best instruments to help
 during this phase.
-In addition, the **addresses, a vital variable for the analysis, will be converted into geographic coordinates** in order to give the possibility to track the route of each driver
-during his activity of delivery.
+In addition, the **area of delivery, a vital variable for the analysis, will be converted into geographic coordinates** in order to give the possibility to track the route of each driver
+during his activity of delivery and to split the area into different areas based on the distance from the center of the city.
 After that, every **missing value or unordinary value will have to be analysed and eventually modified or discarded**. In this way, each value will be useful for an accurate
 analysis.
 Moreover, the possibility to filter and order each variable based on specific criteria will
